@@ -1,10 +1,37 @@
 @Library('shared-library_301') _
 node(label: 'master'){
 
-def gitURL = ""
-def gitBranch = ""
+//for git
+def gitURL = "https://github.com/shruti-singh26/Spring-MySql-Docker.git"
+def gitBranch = "master"
+
+//for maven
+def mvnHome = "MAVEN_HOME"
+def pom = "pom.xml"
+def goal = "clean install"
+
+//for sonar
+def sonarqubeServer = "sonar"
+def sonarqubeGoal = "clean verify sonar:sonar"
+
+//for artifactory
+def artifactoryServer = "JFrog-artifactory"
+def releaseRepo = "shruti-123"
+def snapshotRepo = "shruti-123"
 
 stage ("Git Checkout"){
 	GitCheckOut "${gitURL}","${gitBranch}"
+}
+
+stage('Sonarqube Scanning'){
+    sonarqubeScan "${mvnHome}","${sonarqubeGoal}","${pom}", "${sonarqubeServer}"
+}
+
+stage('Quality-Gate-check'){
+    qualityGate "${sonarqubeServer}"
+}
+
+stage('Maven Build and Push to Artifactory'){
+     mavenBuild "${artifactoryServer}","${mvnHome}","${pom}", "${goal}", "${releaseRepo}", "${snapshotRepo}"
 }
 }
