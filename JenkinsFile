@@ -1,0 +1,10 @@
+@Library('shared-library_301') _
+node(label: 'master'){
+
+def gitURL = ""
+def gitBranch = ""
+
+stage ("Git Checkout"){
+	GitCheckOut "${gitURL}","${gitBranch}"
+}
+}
