@@ -22,11 +22,11 @@ def snapshotRepo = "shruti-123"
 //for devDeployment
 def source = "./target/*.jar"
 def dest = "/home/ubuntu"
-def IP = "52.10.25.211"
+def devid = credentials('DevEnvCred')
 def user = "ubuntu"
 
 //for docker
-def ImageName = "PetClinic"
+def ImageName = "petclinic"
 def DockerRepo = "shrutisingh2/301"
 
 stage ("Git Checkout"){
@@ -46,7 +46,7 @@ stage('Maven Build and Push to JFrog'){
 }
 
 stage ("Deploy in Dev"){
-     devDeploy "${source}","${dest}","${IP}","${user}"
+     devDeploy "${source}","${dest}","${devid}"
 }
 
 stage ("Approval"){
