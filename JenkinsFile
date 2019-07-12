@@ -49,6 +49,10 @@ stage ("Deploy in Dev"){
      devDeploy "${source}","${dest}","${IP}","${user}"
 }
 
+stage ("Approval"){
+     input "Ready to go?"
+}
+
 stage ("Docker build & push to dockerhub"){
 	 dockerBuildPush "${ImageName}","${DockerRepo}","${BUILD_NUMBER}"
 }
