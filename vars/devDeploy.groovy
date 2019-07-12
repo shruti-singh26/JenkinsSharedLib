@@ -1,5 +1,6 @@
 def call (def source, def dest, def devid){
-echo "$devid"
-	sh "scp ${source} ${devid}:${dest}"
+	withCredentials([string(credentialsId:'devid', variable: 'host')]) {
+	sh "scp ${source} ${host}:${dest}"
+	}
 
 }
