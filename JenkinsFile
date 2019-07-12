@@ -20,10 +20,14 @@ def releaseRepo = "shruti-123"
 def snapshotRepo = "shruti-123"
 
 //for devDeployment
-def source = "\target\*.jar"
+def source = "./target/*.jar"
 def dest = "/home/ubuntu"
-def IP = ""
+def IP = "52.10.25.211"
 def user = "ubuntu"
+
+//for docker
+def ImageName = "PetClinic"
+def DockerRepo = "shrutisingh2/301"
 
 stage ("Git Checkout"){
 	GitCheckOut "${gitURL}","${gitBranch}"
@@ -41,7 +45,11 @@ stage('Maven Build and Push to JFrog'){
      mavenBuild "${artifactoryServer}","${mvnHome}","${pom}", "${goal}", "${releaseRepo}", "${snapshotRepo}"
 }
 
-stage (Deploy in Dev){
+stage ("Deploy in Dev"){
      devDeploy "${source}","${dest}","${IP}","${user}"
+}
+
+stage ("Docker build & push to dockerhub"){
+	 dockerBuildPush "${ImageName}","${DockerRepo}","${BUILD_NUMBER}"
 }
 }
