@@ -50,6 +50,7 @@ stage('Maven Build and Push to JFrog'){
      mavenBuild "${artifactoryServer}","${mvnHome}","${pom}", "${goal}", "${releaseRepo}", "${snapshotRepo}"
 }
 
+<<<<<<< HEAD
 stage ("Deploy in Dev"){   
      withCredentials([string(credentialsId:'DevEnvCred', variable: 'host')]) {
             sh "scp ./target/*.jar ${host}:${dest}"
@@ -60,6 +61,10 @@ stage ("Deploy in Dev"){
 stage ("Run in Dev"){   
       sh "ssh -tt ${hosturl} fuser -k 8080/tcp "
       sh "ssh -tt ${hosturl} nohup java -jar *.jar &"
+=======
+stage ("Deploy in Dev"){
+     devDeploy "${source}","${dest}","${devid}"
+>>>>>>> branch 'master' of https://github.com/shruti-singh26/JenkinsSharedLib.git
 }
 
 stage ("Approval"){
