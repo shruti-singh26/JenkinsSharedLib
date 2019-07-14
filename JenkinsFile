@@ -49,12 +49,12 @@ stage('Maven Build and Push to JFrog'){
 stage ("Deploy in Dev"){   
      withCredentials([string(credentialsId:'DevEnvCred', variable: 'host')]) {
             sh "scp ./target/*.jar ${host}:${dest}"
-     hosturl = "${host}"
+     //hosturl = "${host}"
      }
 }
 
 stage ("Run in Dev"){   
-            devDeploy "${hosturl}","${dest}"
+            devDeploy "${hosturl}","${user}",${dest}"
 }
 
 stage ("Approval"){

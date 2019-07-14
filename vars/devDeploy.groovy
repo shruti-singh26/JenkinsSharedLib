@@ -1,11 +1,9 @@
-def call(def hosturl, def dest){
+def call(def hosturl,def user, def dest){
 
-echo ${hosturl}
-
-/*	sh "ssh ${hosturl}"
+	sh "ssh ${user}@${hosturl}"
 	sh "cd ${dest}"
 	sh "lsof -ti tcp:8080 | xargs kill"
 	sh "java -jar *.jar"
-	sh "exit" */
+	sh "exit" 
 
 }
