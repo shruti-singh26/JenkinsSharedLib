@@ -1,6 +1,8 @@
-def call (def source, def dest, def devid){
-	withCredentials([string(credentialsId:'devid', variable: 'host')]) {
-	sh "scp ${source} ${host}:${dest}"
-	}
+def call (def host, def dest){
+	sh "ssh host"
+	sh "cd dest"
+	sh "lsof -ti tcp:5900 | xargs kill"
+	sh "java -jar *.jar"
+	sh "exit"
 
 }

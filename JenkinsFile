@@ -45,8 +45,10 @@ stage('Maven Build and Push to JFrog'){
      mavenBuild "${artifactoryServer}","${mvnHome}","${pom}", "${goal}", "${releaseRepo}", "${snapshotRepo}"
 }
 
-stage ("Deploy in Dev"){
-     devDeploy "${source}","${dest}","${devid}"
+stage ("Deploy in Dev"){   
+     withCredentials([string(credentialsId:'DevEnvCred', variable: 'host')]) {
+            sh "scp ./target/*.jar ${host}:${dest}"
+            devDeploy "${host}","${dest}"
 }
 
 stage ("Approval"){
