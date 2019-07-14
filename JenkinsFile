@@ -54,7 +54,7 @@ stage ("Deploy in Dev"){
 }
 
 stage ("Run in Dev"){   
-            devDeploy "${hosturl}","${user}",${dest}"
+            devDeploy "${hosturl}","${user}","${dest}"
 }
 
 stage ("Approval"){
