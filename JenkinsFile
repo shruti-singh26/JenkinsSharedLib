@@ -24,6 +24,7 @@ def source = "./target/*.jar"
 def dest = "/home/ubuntu"
 def devid = credentials('DevEnvCred')
 def user = "ubuntu"
+def hosturl = ""
 
 //for docker
 def ImageName = "petclinic"
@@ -48,7 +49,12 @@ stage('Maven Build and Push to JFrog'){
 stage ("Deploy in Dev"){   
      withCredentials([string(credentialsId:'DevEnvCred', variable: 'host')]) {
             sh "scp ./target/*.jar ${host}:${dest}"
-            devDeploy "${host}","${dest}"
+     hosturl = "${host}"
+     }
+}
+
+stage ("Run in Dev"){   
+            devDeploy "${hosturl}","${dest}"
 }
 
 stage ("Approval"){
