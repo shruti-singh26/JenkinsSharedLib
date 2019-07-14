@@ -30,6 +30,10 @@ def hosturl = ""
 def ImageName = "petclinic"
 def DockerRepo = "shrutisingh2/301"
 
+//for kubernetes
+def KubePath = "/var/lib/jenkins/KubeFiles"
+def appFile = "app-deployment.yaml"
+
 stage ("Git Checkout"){
 	GitCheckOut "${gitURL}","${gitBranch}"
 }
@@ -49,12 +53,13 @@ stage('Maven Build and Push to JFrog'){
 stage ("Deploy in Dev"){   
      withCredentials([string(credentialsId:'DevEnvCred', variable: 'host')]) {
             sh "scp ./target/*.jar ${host}:${dest}"
-     //hosturl = "${host}"
+     hosturl = "${host}"
      }
 }
 
 stage ("Run in Dev"){   
-            devDeploy "${hosturl}","${user}","${dest}"
+      sh "ssh -tt ${hosturl} fuser -k 8080/tcp "
+      sh "ssh -tt ${hosturl} nohup java -jar *.jar &"
 }
 
 stage ("Approval"){
@@ -63,5 +68,10 @@ stage ("Approval"){
 
 stage ("Docker build & push to dockerhub"){
 	 dockerBuildPush "${ImageName}","${DockerRepo}","${BUILD_NUMBER}"
+}
+
+stage ("Apply to Kubernetes"){
+//	sh" sed 's/^\(\s*image\s*:\s*\).*/\1${DockerRepo}:${ImageName}-${BUILD_NUMBER}/' ${KubePath}/${appFile}"
+	kubeDeploy "${DockerRepo}", "${ImageName}","${BUILD_NUMBER}","${KubePath}","${appFile}"
 }
 }
