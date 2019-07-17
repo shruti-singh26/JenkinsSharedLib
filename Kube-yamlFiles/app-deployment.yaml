@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+   name: appdeployment
+   labels:
+    app: petclinic
+spec:
+   replicas: 2
+   selector:
+      matchLabels:
+          app: petclinic
+   template:
+      metadata:
+        labels:
+          app: petclinic
+      spec:
+        containers:
+        - name : petclinic
+          image: shrutisingh2/301:petclinic-60
+          ports:
+          - containerPort: 8080
+          env:
+          # Use secret in real usage
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                 secretKeyRef:
+                     name: mysecret
+                     key: MYSQL_ROOT_PASSWORD
+            - name: MYSQL_DATABASE
+              valueFrom:
+                 secretKeyRef:
+                     name: mysecret
+                     key: MYSQL_DATABASE
+            - name: MYSQL_URL
+              value: dbservice
+            - name: MYSQL_USERNAME
+              valueFrom:
+                 secretKeyRef:
+                     name: mysecret
+                     key: MYSQL_USERNAME
+          resources:
+             requests:
+               memory: "500Mi"
+               cpu: "100m"
+             limits:
+               memory: "1000Mi"
+               cpu: "200m"

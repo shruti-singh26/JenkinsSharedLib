@@ -2,7 +2,7 @@
 node(label: 'master'){
 
 //for git
-def gitURL = "https://github.com/shruti-singh26/Spring-MySql-Docker.git"
+def gitURL = "git@github.com:shruti-singh26/Spring-MySql-Docker.git"
 def gitBranch = "master"
 
 //for maven
@@ -24,7 +24,7 @@ def source = "./target/*.jar"
 def dest = "/home/ubuntu"
 def devid = credentials('DevEnvCred')
 def user = "ubuntu"
-def hosturl = ""
+def hosturl = "52.10.25.211"
 
 //for docker
 def ImageName = "petclinic"
@@ -43,14 +43,13 @@ stage('Sonarqube Scanning'){
 }
 
 stage('Quality-Gate-check'){
-    qualityGate "${sonarqubeServer}"
+   qualityGate "${sonarqubeServer}"
 }
 
 stage('Maven Build and Push to JFrog'){
      mavenBuild "${artifactoryServer}","${mvnHome}","${pom}", "${goal}", "${releaseRepo}", "${snapshotRepo}"
 }
 
-<<<<<<< HEAD
 stage ("Deploy in Dev"){   
      withCredentials([string(credentialsId:'DevEnvCred', variable: 'host')]) {
             sh "scp ./target/*.jar ${host}:${dest}"
@@ -59,12 +58,9 @@ stage ("Deploy in Dev"){
 }
 
 stage ("Run in Dev"){   
-      sh "ssh -tt ${hosturl} fuser -k 8080/tcp "
-      sh "ssh -tt ${hosturl} nohup java -jar *.jar &"
-=======
-stage ("Deploy in Dev"){
-     devDeploy "${source}","${dest}","${devid}"
->>>>>>> branch 'master' of https://github.com/shruti-singh26/JenkinsSharedLib.git
+    sh "ssh -tt ${hosturl} fuser -k 8080/tcp "
+    sleep 10
+    sh "ssh ${hosturl} nohup java -jar *.jar &" 
 }
 
 stage ("Approval"){
@@ -76,7 +72,7 @@ stage ("Docker build & push to dockerhub"){
 }
 
 stage ("Apply to Kubernetes"){
-//	sh" sed 's/^\(\s*image\s*:\s*\).*/\1${DockerRepo}:${ImageName}-${BUILD_NUMBER}/' ${KubePath}/${appFile}"
-	kubeDeploy "${DockerRepo}", "${ImageName}","${BUILD_NUMBER}","${KubePath}","${appFile}"
+    sh "sed -i 's/:${ImageName}-\\([0-9][0-9]\\)/:${ImageName}-${BUILD_NUMBER}/g' ${KubePath}/${appFile}"
+    sh "kubectl apply -f ${KubePath}/${appFile}"    
 }
 }

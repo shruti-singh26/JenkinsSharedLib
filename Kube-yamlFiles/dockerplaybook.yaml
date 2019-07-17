@@ -1,0 +1,17 @@
+---
+
+- hosts: all
+  tasks:
+
+    - name: Install add-apt-repostory
+      become: yes
+      apt: name=software-properties-common
+           state=latest
+
+    - name: java install
+      become: yes
+      command: apt install default-jdk -y
+	
+	- name: Docker compose set up
+	  become: yes
+	  command: apt-get install docker-compose -y
